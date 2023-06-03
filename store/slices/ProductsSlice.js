@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Product from "../../models/Product";
+import PRODUCTS from "../../data/dummy-data";
 
 const initialState = {
-  availableProducts: [],
-  userProducts: [],
+  availableProducts: PRODUCTS,
+  userProducts: PRODUCTS.filter((product) => product.ownerId === "u1"),
   favoriteProducts: [],
 };
 

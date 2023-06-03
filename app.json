@@ -3,7 +3,7 @@
     "name": "rn-shop-app",
     "slug": "rn-shop-app",
     "version": "1.0.0",
-    "orientation": "landscape",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
