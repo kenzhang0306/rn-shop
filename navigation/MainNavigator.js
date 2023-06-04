@@ -8,6 +8,7 @@ import {
 } from "@react-navigation/drawer";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProductsOverviewScreen from "../screens/shop/ProductsOverviewScreen";
+import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform, SafeAreaView, View, Button } from "react-native";
 import ThemeColors from "../constants/ThemeColors";
@@ -34,11 +35,11 @@ export default function MainNavigator() {
     return (
       <Stack.Navigator screenOptions={defaultNavOptions}>
         <Stack.Screen
-          name="ProductsOverview"
+          name="Products Overview"
           component={ProductsOverviewScreen}
         />
-        {/* <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-        <Stack.Screen name="Cart" component={CartScreen} /> */}
+        <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
+        {/* <Stack.Screen name="Cart" component={CartScreen} /> */}
       </Stack.Navigator>
     );
   };
