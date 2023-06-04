@@ -14,7 +14,12 @@ export default function ProductItem(props) {
   return (
     <Card style={styles.product}>
       <View style={styles.touchable}>
-        <TouchableOpacity onPress={props.onSelect} useForeground>
+        <TouchableOpacity
+          onPress={() => {
+            props.onSelectCallback();
+          }}
+          useForeground
+        >
           <View>
             <View style={styles.imageContainer}>
               <Image style={styles.image} source={{ uri: props.image }} />
