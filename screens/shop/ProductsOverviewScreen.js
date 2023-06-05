@@ -1,14 +1,18 @@
 import { View, Button, FlatList, StyleSheet } from "react-native";
-import React from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAvailableProducts } from "../../store/slices/ProductsSlice";
 import ProductItem from "../../components/shop/ProductItem";
 import ThemeColors from "../../constants/ThemeColors";
 import { addToCart } from "../../store/slices/CartSlice";
+import { useNavigation } from "@react-navigation/native";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import CustomHeaderButton from "../../components/UI/CustomHeaderButton";
 
 export default function ProductsOverviewScreen(props) {
   const availableProducts = useSelector(getAvailableProducts);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const selectItemHandler = (id, title) => {
     props.navigation.navigate("ProductDetail", {
@@ -38,6 +42,31 @@ export default function ProductsOverviewScreen(props) {
       </ProductItem>
     );
   };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: "All Products",
+      headerLeft: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            title="card"
+            iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"}
+            onPress={() => navigation.toggleDrawer()}
+          />
+        </HeaderButtons>
+      ),
+      headerRight: () => (
+        <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+          <Item
+            title="card"
+            iconName={Platform.OS === "android" ? "md-cart" : "ios-cart"}
+            onPress={() => navigation.navigate("Cart")}
+          />
+        </HeaderButtons>
+      ),
+    });
+  }, [navigation]);
+
   return (
     <FlatList
       data={availableProducts}

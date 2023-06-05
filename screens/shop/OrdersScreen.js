@@ -45,9 +45,9 @@ export default function OrdersScreen(props) {
     );
   }
 
-  // useEffect(() => {
+  // useLayoutEffect(() => {
   //   navigation.setOptions({
-  //     title: "Your Orders",
+  //     headerTitle: "Your Orders",
   //     headerLeft: () => (
   //       <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
   //         <Item
