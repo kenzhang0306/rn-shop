@@ -6,7 +6,7 @@ import {
   Image,
   Button,
 } from "react-native";
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { getAvailableProducts } from "../../store/slices/ProductsSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,6 +15,7 @@ import { addToCart } from "../../store/slices/CartSlice";
 
 export default function ProductDetailScreen() {
   const route = useRoute();
+  const navigation = useNavigation();
   const { productId } = route.params;
 
   const availableProducts = useSelector(getAvailableProducts);
@@ -24,6 +25,12 @@ export default function ProductDetailScreen() {
   );
 
   const dispatch = useDispatch();
+
+  const { productTitle } = route.params;
+
+  useLayoutEffect(() => {
+    navigation.setOptions({ title: productTitle });
+  }, [navigation, productTitle]);
 
   return (
     <ScrollView>
@@ -41,9 +48,9 @@ export default function ProductDetailScreen() {
   );
 }
 
-ProductDetailScreen.options = ({ route }) => ({
-  title: route.params.productTitle,
-});
+// ProductDetailScreen.options = ({ route }) => ({
+//   title: route.params.productTitle,
+// });
 
 const styles = StyleSheet.create({
   image: {

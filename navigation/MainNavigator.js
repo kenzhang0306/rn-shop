@@ -13,6 +13,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { Platform, SafeAreaView, View, Button } from "react-native";
 import ThemeColors from "../constants/ThemeColors";
 import { useDispatch } from "react-redux";
+import OrdersScreen from "../screens/shop/OrdersScreen";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 
 export default function MainNavigator() {
   const Stack = createNativeStackNavigator();
@@ -40,6 +43,29 @@ export default function MainNavigator() {
         />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
         {/* <Stack.Screen name="Cart" component={CartScreen} /> */}
+      </Stack.Navigator>
+    );
+  };
+
+  const OrdersNavigator = ({ navigation }) => {
+    return (
+      <Stack.Navigator screenOptions={defaultNavOptions}>
+        <Stack.Screen
+          name="Orders Screen"
+          component={OrdersScreen}
+          options={{
+            title: "Your Orders",
+            headerLeft: () => (
+              <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
+                <Item
+                  title="card"
+                  iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"}
+                  onPress={() => navigation.toggleDrawer()}
+                />
+              </HeaderButtons>
+            ),
+          }}
+        />
       </Stack.Navigator>
     );
   };
@@ -86,8 +112,8 @@ export default function MainNavigator() {
         drawerContent={(props) => <CustomDrawerContent {...props} />}
       >
         <Drawer.Screen name="Products" component={ProductsNavigator} />
-        {/* <Drawer.Screen name="Orders" component={OrdersNavigator} />
-        <Drawer.Screen name="Admin" component={AdminNavigator} /> */}
+        <Drawer.Screen name="Orders" component={OrdersNavigator} />
+        {/* <Drawer.Screen name="Admin" component={AdminNavigator} /> */}
       </Drawer.Navigator>
     );
   };
