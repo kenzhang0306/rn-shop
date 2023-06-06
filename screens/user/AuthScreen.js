@@ -21,7 +21,7 @@ import { login, signup } from "../../store/slices/AuthSlice";
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 
 const formReducer = (state, action) => {
-  // console.log('state, action', state, action);
+  console.log("state, action", state, action);
 
   if (action.type === FORM_INPUT_UPDATE) {
     const updatedValues = {
@@ -71,10 +71,10 @@ const AuthScreen = (props) => {
   }, [error]);
 
   const authHandler = useCallback(() => {
-    console.log(formState.inputValues.password);
+    console.log("after sign up pressed " + formState.inputValues.password);
     let action;
     if (isSignUp) {
-      //console.log(JSON.stringify(formState.inputValues));
+      console.log("signup: " + JSON.stringify(formState.inputValues));
       action = signup(
         formState.inputValues.email,
         formState.inputValues.password
@@ -98,7 +98,7 @@ const AuthScreen = (props) => {
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
-      console.log(inputValue);
+      console.log(inputIdentifier, inputValue);
       dispatchFormState({
         type: FORM_INPUT_UPDATE,
         value: inputValue,
