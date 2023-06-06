@@ -9,6 +9,7 @@ import {
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProductsOverviewScreen from "../screens/shop/ProductsOverviewScreen";
 import ProductDetailScreen from "../screens/shop/ProductDetailScreen";
+import CartScreen from "../screens/shop/CartScreen";
 import { Ionicons } from "@expo/vector-icons";
 import { Platform, SafeAreaView, View, Button } from "react-native";
 import ThemeColors from "../constants/ThemeColors";
@@ -16,6 +17,7 @@ import { useDispatch } from "react-redux";
 import OrdersScreen from "../screens/shop/OrdersScreen";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
+import AuthScreen from "../screens/user/AuthScreen";
 
 export default function MainNavigator() {
   const Stack = createNativeStackNavigator();
@@ -42,7 +44,7 @@ export default function MainNavigator() {
           component={ProductsOverviewScreen}
         />
         <Stack.Screen name="ProductDetail" component={ProductDetailScreen} />
-        {/* <Stack.Screen name="Cart" component={CartScreen} /> */}
+        <Stack.Screen name="Cart" component={CartScreen} />
       </Stack.Navigator>
     );
   };
@@ -54,7 +56,7 @@ export default function MainNavigator() {
           name="Orders Screen"
           component={OrdersScreen}
           options={{
-            title: "Your Orders",
+            title: "My Orders",
             headerLeft: () => (
               <HeaderButtons HeaderButtonComponent={CustomHeaderButton}>
                 <Item
@@ -118,11 +120,19 @@ export default function MainNavigator() {
     );
   };
 
+  const AuthNavigator = () => {
+    return (
+      <Stack.Navigator screenOptions={defaultNavOptions}>
+        <Stack.Screen name="AuthScreen" component={AuthScreen} />
+      </Stack.Navigator>
+    );
+  };
+
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* <Stack.Screen name="StartUp" component={StartUpScreen} />
-        <Stack.Screen name="Auth" component={AuthNavigator} /> */}
+        {/* <Stack.Screen name="StartUp" component={StartUpScreen} /> */}
+        <Stack.Screen name="Auth" component={AuthNavigator} />
         <Stack.Screen name="Shop" component={ShopNavigator} />
       </Stack.Navigator>
     </NavigationContainer>

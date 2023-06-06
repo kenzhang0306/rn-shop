@@ -6,6 +6,7 @@ import MainNavigator from "./navigation/MainNavigator";
 import React, { useState, useEffect } from "react";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import NavigationContainerComponent from "./navigation/NavigationContainer";
 
 export default function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -48,7 +49,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <MainNavigator />
+      <NavigationContainerComponent />
     </Provider>
   );
 }

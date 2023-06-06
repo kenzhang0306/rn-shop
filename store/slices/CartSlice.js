@@ -17,7 +17,7 @@ const cartSlice = createSlice({
       const prodTitle = addedProduct.title;
 
       let updatedOrNewCartItem;
-      if (state.items[addedProduct.id]) {
+      if (typeof state.items[addedProduct.id] != "undefined") {
         updatedOrNewCartItem = new CartItem(
           state.items[addedProduct.id].quantity + 1,
           prodPrice,
@@ -49,7 +49,7 @@ const cartSlice = createSlice({
 
       state.totalAmount -= selectedCartItem.productPrice;
     },
-    addOrder: (state) => {
+    addOrder: (state, action) => {
       state.items = {};
       state.totalAmount = 0;
     },
@@ -65,6 +65,8 @@ const cartSlice = createSlice({
   },
 });
 
+export const getItems = (state) => state.cart.items;
+export const getTotalAmount = (state) => state.cart.totalAmount;
 export const { addToCart, removeFromCart, addOrder, deleteProduct } =
   cartSlice.actions;
 
