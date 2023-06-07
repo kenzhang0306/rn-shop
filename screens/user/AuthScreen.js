@@ -1,4 +1,10 @@
-import React, { useReducer, useEffect, useState, useCallback } from "react";
+import React, {
+  useReducer,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import {
   View,
   KeyboardAvoidingView,
@@ -9,6 +15,7 @@ import {
   Button,
   StyleSheet,
   Alert,
+  Keyboard,
 } from "react-native";
 import { useDispatch } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
@@ -21,28 +28,29 @@ import { login, signup } from "../../store/slices/AuthSlice";
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 
 const formReducer = (state, action) => {
-  console.log("state, action", state, action);
-
-  if (action.type === FORM_INPUT_UPDATE) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value,
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid,
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-    }
-    return {
-      formIsValid: updatedFormIsValid,
-      inputValidities: updatedValidities,
-      inputValues: updatedValues,
-    };
+  //console.log("state, action", state, action);
+  switch (action.type) {
+    case FORM_INPUT_UPDATE:
+      const updatedValues = {
+        ...state.inputValues,
+        [action.input]: action.value,
+      };
+      const updatedValidities = {
+        ...state.inputValidities,
+        [action.input]: action.isValid,
+      };
+      let updatedFormIsValid = true;
+      for (const key in updatedValidities) {
+        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+      }
+      return {
+        formIsValid: updatedFormIsValid,
+        inputValidities: updatedValidities,
+        inputValues: updatedValues,
+      };
+    default:
+      return state;
   }
-  return state;
 };
 
 const AuthScreen = (props) => {
@@ -64,37 +72,114 @@ const AuthScreen = (props) => {
     formIsValid: false,
   });
 
+  console.log("after updated: " + JSON.stringify(formState));
+
   useEffect(() => {
     if (error) {
       Alert.alert("An Error Occurred!", error, [{ text: "Okay" }]);
     }
   }, [error]);
 
+  const keyboardDidHideListener = Keyboard.addListener(
+    "keyboardDidHide",
+    () => {
+      console.log("Keyboard is closed: " + JSON.stringify(formState));
+      // 其他逻辑...
+      if (formState.formIsValid) {
+        let action;
+        if (isSignUp) {
+          //console.log("signup: " + formState.inputValues);
+          action = signup(
+            formState.inputValues.email,
+            formState.inputValues.password
+          );
+        } else {
+          action = login(
+            formState.inputValues.email,
+            formState.inputValues.password
+          );
+        }
+        setError(null);
+        setIsLoading(true);
+        try {
+          dispatch(action);
+          props.navigation.navigate("Shop");
+        } catch (err) {
+          setError(err.message);
+          setIsLoading(false);
+        }
+      }
+    }
+  );
+
+  //   const authHandler = useCallback(() => {
+  //     Keyboard.dismiss();
+
+  //     setTimeout(() => {
+  //       console.log(
+  //         "after sign up pressed " + JSON.stringify(formState.inputValues)
+  //       );
+  //       let action;
+  //       if (isSignUp) {
+  //         //console.log("signup: " + formState.inputValues);
+  //         action = signup(
+  //           formState.inputValues.email,
+  //           formState.inputValues.password
+  //         );
+  //       } else {
+  //         action = login(
+  //           formState.inputValues.email,
+  //           formState.inputValues.password
+  //         );
+  //       }
+  //       setError(null);
+  //       setIsLoading(true);
+  //       try {
+  //         dispatch(action);
+  //         props.navigation.navigate("Shop");
+  //       } catch (err) {
+  //         setError(err.message);
+  //         setIsLoading(false);
+  //       }
+  //     }, 5000);
+  //   }, [dispatch, formState, dispatchFormState]);
+
   const authHandler = useCallback(() => {
-    console.log("after sign up pressed " + formState.inputValues.password);
-    let action;
-    if (isSignUp) {
-      console.log("signup: " + JSON.stringify(formState.inputValues));
-      action = signup(
-        formState.inputValues.email,
-        formState.inputValues.password
-      );
+    Keyboard.dismiss();
+
+    keyboardDidHideListener;
+    console.log("after sign up pressed: " + JSON.stringify(formState));
+    if (formState.formIsValid) {
+      console.log("sign up");
     } else {
-      action = login(
-        formState.inputValues.email,
-        formState.inputValues.password
-      );
+      console.log("can not sin up");
     }
-    setError(null);
-    setIsLoading(true);
-    try {
-      dispatch(action);
-      props.navigation.navigate("Shop");
-    } catch (err) {
-      setError(err.message);
-      setIsLoading(false);
-    }
-  }, [dispatch, formState, dispatchFormState]);
+
+    // if (formState.formIsValid) {
+    //   let action;
+    //   if (isSignUp) {
+    //     //console.log("signup: " + formState.inputValues);
+    //     action = signup(
+    //       formState.inputValues.email,
+    //       formState.inputValues.password
+    //     );
+    //   } else {
+    //     action = login(
+    //       formState.inputValues.email,
+    //       formState.inputValues.password
+    //     );
+    //   }
+    //   setError(null);
+    //   setIsLoading(true);
+    //   try {
+    //     dispatch(action);
+    //     props.navigation.navigate("Shop");
+    //   } catch (err) {
+    //     setError(err.message);
+    //     setIsLoading(false);
+    //   }
+    // }
+  }, [formState, dispatch, dispatchFormState]);
 
   const inputChangeHandler = useCallback(
     (inputIdentifier, inputValue, inputValidity) => {
@@ -154,7 +239,10 @@ const AuthScreen = (props) => {
               <Button
                 title={isSignUp ? "Sign Up" : "Login"}
                 color={ThemeColors.chocolate}
-                onPress={authHandler}
+                onPress={() => {
+                  // Keyboard.dismiss();
+                  authHandler();
+                }}
               />
             )}
           </View>
@@ -171,9 +259,9 @@ const AuthScreen = (props) => {
   );
 };
 
-AuthScreen.navigationOptions = {
-  headerTitle: "Authentication",
-};
+// AuthScreen.navigationOptions = {
+//   headerTitle: "Authentication",
+// };
 
 const styles = StyleSheet.create({
   screen: {
