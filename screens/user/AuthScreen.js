@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useMemo,
+  useRef,
 } from "react";
 import {
   View,
@@ -72,7 +73,34 @@ const AuthScreen = (props) => {
     formIsValid: false,
   });
 
-  console.log("after updated: " + JSON.stringify(formState));
+  useEffect(() => {
+    console.log("after updated: " + JSON.stringify(formState));
+    if (formState.formIsValid) {
+      let action;
+      if (isSignUp) {
+        //console.log("signup: " + formState.inputValues);
+        action = signup(
+          formState.inputValues.email,
+          formState.inputValues.password
+        );
+      } else {
+        action = login(
+          formState.inputValues.email,
+          formState.inputValues.password
+        );
+      }
+      setError(null);
+      setIsLoading(true);
+      try {
+        console.log("action: " + action);
+        //dispatch(action);
+        props.navigation.navigate("Shop");
+      } catch (err) {
+        setError(err.message);
+        setIsLoading(false);
+      }
+    }
+  }, [formState]);
 
   useEffect(() => {
     if (error) {
@@ -80,74 +108,7 @@ const AuthScreen = (props) => {
     }
   }, [error]);
 
-  const keyboardDidHideListener = Keyboard.addListener(
-    "keyboardDidHide",
-    () => {
-      console.log("Keyboard is closed: " + JSON.stringify(formState));
-      // 其他逻辑...
-      if (formState.formIsValid) {
-        let action;
-        if (isSignUp) {
-          //console.log("signup: " + formState.inputValues);
-          action = signup(
-            formState.inputValues.email,
-            formState.inputValues.password
-          );
-        } else {
-          action = login(
-            formState.inputValues.email,
-            formState.inputValues.password
-          );
-        }
-        setError(null);
-        setIsLoading(true);
-        try {
-          dispatch(action);
-          props.navigation.navigate("Shop");
-        } catch (err) {
-          setError(err.message);
-          setIsLoading(false);
-        }
-      }
-    }
-  );
-
-  //   const authHandler = useCallback(() => {
-  //     Keyboard.dismiss();
-
-  //     setTimeout(() => {
-  //       console.log(
-  //         "after sign up pressed " + JSON.stringify(formState.inputValues)
-  //       );
-  //       let action;
-  //       if (isSignUp) {
-  //         //console.log("signup: " + formState.inputValues);
-  //         action = signup(
-  //           formState.inputValues.email,
-  //           formState.inputValues.password
-  //         );
-  //       } else {
-  //         action = login(
-  //           formState.inputValues.email,
-  //           formState.inputValues.password
-  //         );
-  //       }
-  //       setError(null);
-  //       setIsLoading(true);
-  //       try {
-  //         dispatch(action);
-  //         props.navigation.navigate("Shop");
-  //       } catch (err) {
-  //         setError(err.message);
-  //         setIsLoading(false);
-  //       }
-  //     }, 5000);
-  //   }, [dispatch, formState, dispatchFormState]);
-
   const authHandler = useCallback(() => {
-    Keyboard.dismiss();
-
-    keyboardDidHideListener;
     console.log("after sign up pressed: " + JSON.stringify(formState));
     if (formState.formIsValid) {
       console.log("sign up");
@@ -240,7 +201,7 @@ const AuthScreen = (props) => {
                 title={isSignUp ? "Sign Up" : "Login"}
                 color={ThemeColors.chocolate}
                 onPress={() => {
-                  // Keyboard.dismiss();
+                  Keyboard.dismiss();
                   authHandler();
                 }}
               />

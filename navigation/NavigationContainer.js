@@ -4,11 +4,12 @@
 
 // import MainNavigator from "./MainNavigator";
 
-// const NavigationContainerComponent = () => {
+// const NavigationContainer = () => {
 //   const isAuth = useSelector((state) => !!state.auth.token);
 //   const navigationRef = useRef();
 
 //   useEffect(() => {
+//     console.log("Auth:" + isAuth);
 //     if (!isAuth) {
 //       CommonActions.navigate("Auth");
 //     }
@@ -17,7 +18,7 @@
 //   return <MainNavigator />;
 // };
 
-// export default NavigationContainerComponent;
+// export default NavigationContainer;
 
 import React, { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -29,8 +30,8 @@ import MainNavigator from "./MainNavigator";
 const NavigationContainer = () => {
   const isAuth = useSelector((state) => !!state.auth.token);
   const navRef = useRef < NavigationContainerRef > null;
-
   useEffect(() => {
+    console.log("Auth:" + isAuth);
     if (!isAuth) {
       navRef.current?.dispatch(CommonActions.navigate("Auth"));
     }

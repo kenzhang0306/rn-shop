@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const authenticateUser = createAsyncThunk(
+export const authenticateUser = createAsyncThunk(
   "auth/authenticateUser",
   async ({ token, userId, expiryTime }, { dispatch }) => {
     dispatch(setLogoutTimer(expiryTime));
@@ -9,7 +9,7 @@ const authenticateUser = createAsyncThunk(
   }
 );
 
-const logoutUser = createAsyncThunk(
+export const logoutUser = createAsyncThunk(
   "auth/logoutUser",
   async (_, { dispatch }) => {
     clearLogoutTimer();
@@ -54,6 +54,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.token = null;
         state.userId = null;
+        console.log("user logged out");
       })
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
@@ -65,7 +66,6 @@ const authSlice = createSlice({
 export const { authenticate, logout } = authSlice.actions;
 
 export const signup = (email, password) => {
-  console.log(email, password);
   return async (dispatch) => {
     const response = await fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCPc2HMVEKsDes-jQBkoSQX8D94jnqpERg",
