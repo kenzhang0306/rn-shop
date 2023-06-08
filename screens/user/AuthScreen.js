@@ -18,13 +18,14 @@ import {
   Alert,
   Keyboard,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LinearGradient } from "expo-linear-gradient";
 
 import Card from "../../components/UI/Card";
 import Input from "../../components/UI/Input";
 import ThemeColors from "../../constants/ThemeColors";
-import { login, signup } from "../../store/slices/AuthSlice";
+import { login, signup, test } from "../../store/slices/AuthSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FORM_INPUT_UPDATE = "FORM_INPUT_UPDATE";
 
@@ -60,6 +61,7 @@ const AuthScreen = (props) => {
   const [isSignUp, setIsSignUp] = useState(false);
 
   const dispatch = useDispatch();
+  const userId = useSelector((state) => state.auth.userId);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -73,28 +75,47 @@ const AuthScreen = (props) => {
     formIsValid: false,
   });
 
+  const retrieveDataFromStorage = async () => {
+    try {
+      const userData = await AsyncStorage.getItem("userData");
+      if (userData !== null) {
+        const { token, userId, expiryDate } = JSON.parse(userData);
+        // Use the retrieved data as needed
+        console.log("token: " + token);
+        console.log("userId: " + userId);
+        console.log("expiryDate: " + expiryDate);
+      }
+    } catch (error) {
+      // Handle error while retrieving data
+    }
+  };
+
   useEffect(() => {
     console.log("after updated: " + JSON.stringify(formState));
     if (formState.formIsValid) {
       let action;
       if (isSignUp) {
         //console.log("signup: " + formState.inputValues);
-        action = signup(
-          formState.inputValues.email,
-          formState.inputValues.password
-        );
+        action = signup({
+          email: formState.inputValues.email,
+          password: formState.inputValues.password,
+        });
       } else {
-        action = login(
-          formState.inputValues.email,
-          formState.inputValues.password
-        );
+        action = login({
+          email: formState.inputValues.email,
+          password: formState.inputValues.password,
+          navigation: props.navigation,
+        });
       }
       setError(null);
       setIsLoading(true);
       try {
-        console.log("action: " + action);
-        //dispatch(action);
-        props.navigation.navigate("Shop");
+        dispatch(action);
+        console.log("User Id: " + userId);
+        //retrieveDataFromStorage();
+        //dispatch(test);
+
+        //props.navigation.navigate("Shop");
       } catch (err) {
         setError(err.message);
         setIsLoading(false);
@@ -109,13 +130,12 @@ const AuthScreen = (props) => {
   }, [error]);
 
   const authHandler = useCallback(() => {
-    console.log("after sign up pressed: " + JSON.stringify(formState));
-    if (formState.formIsValid) {
-      console.log("sign up");
-    } else {
-      console.log("can not sin up");
-    }
-
+    // console.log("after sign up pressed: " + JSON.stringify(formState));
+    // if (formState.formIsValid) {
+    //   console.log("sign up");
+    // } else {
+    //   console.log("can not sin up");
+    // }
     // if (formState.formIsValid) {
     //   let action;
     //   if (isSignUp) {
@@ -186,7 +206,7 @@ const AuthScreen = (props) => {
               keyboardType="default"
               secureTextEntry
               required
-              minLength={3}
+              minLength={6}
               autoCapitalize="none"
               errorText="Please enter a valid password."
               onInputChange={inputChangeHandler}

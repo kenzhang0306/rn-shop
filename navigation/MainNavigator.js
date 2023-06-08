@@ -18,7 +18,7 @@ import OrdersScreen from "../screens/shop/OrdersScreen";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import CustomHeaderButton from "../components/UI/CustomHeaderButton";
 import AuthScreen from "../screens/user/AuthScreen";
-import { logoutAsync, logoutUser } from "../store/slices/AuthSlice";
+import { logout } from "../store/slices/AuthSlice";
 
 export default function MainNavigator() {
   const Stack = createNativeStackNavigator();
@@ -77,8 +77,8 @@ export default function MainNavigator() {
     const dispatch = useDispatch();
 
     const handleLogout = () => {
-      dispatch(logoutUser());
-      //props.navigation.navigate("Auth");
+      dispatch(logout);
+      props.navigation.navigate("Auth");
     };
 
     return (
