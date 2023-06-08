@@ -1,15 +1,18 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
+
+const initialState = {
+  token: null,
+  userId: null,
+  expiryDate: null,
+  isLoading: false,
+  error: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
-  initialState: {
-    token: null,
-    userId: null,
-    expiryDate: null,
-    isLoading: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     authenticate: (state, action) => {
       state.token = action.payload.token;
@@ -114,7 +117,20 @@ export const signup = createAsyncThunk(
         if (errorId === "EMAIL_EXISTS") {
           message = "This email already exists!";
         }
+        Alert.alert("Error", message, [
+          {
+            text: "OK",
+            style: "default",
+          },
+        ]);
         throw new Error(message);
+      } else {
+        Alert.alert("Successful Registration", "You can log in now", [
+          {
+            text: "OK",
+            style: "default",
+          },
+        ]);
       }
 
       const resData = await response.json();
@@ -179,6 +195,12 @@ export const login = createAsyncThunk(
         } else if (errorId === "INVALID_PASSWORD") {
           message = "This password is not valid!";
         }
+        Alert.alert("Error", message, [
+          {
+            text: "OK",
+            style: "default",
+          },
+        ]);
         throw new Error(message);
       } else {
         payload.navigation.navigate("Shop");
@@ -205,7 +227,7 @@ export const login = createAsyncThunk(
         new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000)
       );
 
-      // Return the result data
+      //Return the result data
       return {
         token: resData.idToken,
         userId: resData.localId,

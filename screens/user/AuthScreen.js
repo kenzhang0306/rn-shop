@@ -57,11 +57,12 @@ const formReducer = (state, action) => {
 
 const AuthScreen = (props) => {
   const [error, setError] = useState();
-  const [isLoading, setIsLoading] = useState(false);
+  //const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [authPreessed, setAuthPreessed] = useState(false);
 
   const dispatch = useDispatch();
-  const userId = useSelector((state) => state.auth.userId);
+  const isLoading = useSelector((state) => state.auth.isLoading);
 
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -92,7 +93,7 @@ const AuthScreen = (props) => {
 
   useEffect(() => {
     console.log("after updated: " + JSON.stringify(formState));
-    if (formState.formIsValid) {
+    if (formState.formIsValid && authPreessed) {
       let action;
       if (isSignUp) {
         //console.log("signup: " + formState.inputValues);
@@ -108,20 +109,21 @@ const AuthScreen = (props) => {
         });
       }
       setError(null);
-      setIsLoading(true);
+      //setIsLoading(true);
       try {
         dispatch(action);
-        console.log("User Id: " + userId);
+        //setIsLoading(false);
+        setAuthPreessed(false);
         //retrieveDataFromStorage();
         //dispatch(test);
 
         //props.navigation.navigate("Shop");
       } catch (err) {
         setError(err.message);
-        setIsLoading(false);
+        //setIsLoading(false);
       }
     }
-  }, [formState]);
+  }, [formState, authPreessed]);
 
   useEffect(() => {
     if (error) {
@@ -130,6 +132,8 @@ const AuthScreen = (props) => {
   }, [error]);
 
   const authHandler = useCallback(() => {
+    console.log("login or signup pressed");
+    setAuthPreessed(true);
     // console.log("after sign up pressed: " + JSON.stringify(formState));
     // if (formState.formIsValid) {
     //   console.log("sign up");
